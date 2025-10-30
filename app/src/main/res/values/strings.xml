@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Spam Blocker</string>
+    <string name="accessibility_service_description">Reads Truecaller caller name to block spam calls based on keywords</string>
+    <string name="title_blocked_keywords">Blocked Keywords</string>
+    <string name="hint_add_keyword">Enter keyword to block</string>
+    <string name="btn_add_keyword">Add Keyword</string>
+    <string name="btn_enable_accessibility">Enable Accessibility Service</string>
+    <string name="status_service_enabled">Service: Enabled</string>
+    <string name="status_service_disabled">Service: Disabled</string>
+    <string name="empty_keywords">No keywords added yet</string>
+    <string name="permissions_required">Permissions Required</string>
+    <string name="grant_permissions">Please grant all required permissions for the app to work</string>
+</resources>

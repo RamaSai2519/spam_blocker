@@ -1,0 +1,10 @@
+Note: Placeholder launcher icons have been created.
+
+For production, replace these with proper icons:
+- mipmap-mdpi/ic_launcher.png (48x48)
+- mipmap-hdpi/ic_launcher.png (72x72)
+- mipmap-xhdpi/ic_launcher.png (96x96)
+- mipmap-xxhdpi/ic_launcher.png (144x144)
+- mipmap-xxxhdpi/ic_launcher.png (192x192)
+
+You can use Android Studio's Image Asset Studio to generate proper icons.
