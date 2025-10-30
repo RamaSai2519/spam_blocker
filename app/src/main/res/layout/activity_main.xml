@@ -23,12 +23,55 @@
             android:textColor="#C62828"
             android:layout_marginBottom="16dp" />
 
+        <!-- Do Not Disturb Status -->
+        <TextView
+            android:id="@+id/tv_dnd_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Do Not Disturb: Access Required"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:background="#FFEBEE"
+            android:textColor="#C62828"
+            android:layout_marginBottom="8dp" />
+
         <!-- Enable Accessibility Button -->
         <Button
             android:id="@+id/btn_enable_accessibility"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btn_enable_accessibility"
+            android:layout_marginBottom="8dp" />
+
+        <!-- DND Access Button -->
+        <Button
+            android:id="@+id/btn_dnd_access"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Grant DND Access"
+            android:backgroundTint="@android:color/holo_orange_light"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Test Blocking Button -->
+        <Button
+            android:id="@+id/btn_test_blocking"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test Blocking Functionality"
+            android:backgroundTint="@android:color/holo_blue_light"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Blocked Numbers Button -->
+        <Button
+            android:id="@+id/btn_blocked_numbers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Blocked Numbers"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:textColor="@android:color/white"
             android:layout_marginBottom="24dp" />
 
         <!-- Blocked Keywords Section -->

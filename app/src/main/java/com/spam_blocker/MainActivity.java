@@ -24,8 +24,12 @@ public class MainActivity extends AppCompatActivity {
     private EditText etKeyword;
     private Button btnAddKeyword;
     private Button btnEnableAccessibility;
+    private Button btnBlockedNumbers;
+    private Button btnDndAccess;
+    private Button btnTestBlocking;
     private RecyclerView rvKeywords;
     private TextView tvServiceStatus;
+    private TextView tvDndStatus;
     private TextView tvEmptyKeywords;
 
     private KeywordAdapter keywordAdapter;
@@ -38,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
 
         keywordManager = new KeywordManager(this);
 
+        // Add some test blocked numbers for demonstration (only add once)
+        addTestBlockedNumbers();
+
         initViews();
         setupRecyclerView();
         setupListeners();
@@ -49,8 +56,12 @@ public class MainActivity extends AppCompatActivity {
         etKeyword = findViewById(R.id.et_keyword);
         btnAddKeyword = findViewById(R.id.btn_add_keyword);
         btnEnableAccessibility = findViewById(R.id.btn_enable_accessibility);
+        btnBlockedNumbers = findViewById(R.id.btn_blocked_numbers);
+        btnDndAccess = findViewById(R.id.btn_dnd_access);
+        btnTestBlocking = findViewById(R.id.btn_test_blocking);
         rvKeywords = findViewById(R.id.rv_keywords);
         tvServiceStatus = findViewById(R.id.tv_service_status);
+        tvDndStatus = findViewById(R.id.tv_dnd_status);
         tvEmptyKeywords = findViewById(R.id.tv_empty_keywords);
     }
 
@@ -90,6 +101,35 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 Toast.makeText(MainActivity.this, "Please enable Spam Blocker accessibility service", Toast.LENGTH_LONG)
                         .show();
+            }
+        });
+
+        btnBlockedNumbers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BlockedNumbersActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnDndAccess.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!PermissionManager.hasNotificationPolicyAccess(MainActivity.this)) {
+                    Toast.makeText(MainActivity.this, PermissionManager.getDndAccessExplanation(),
+                            Toast.LENGTH_LONG).show();
+                    PermissionManager.requestNotificationPolicyAccess(MainActivity.this);
+                } else {
+                    Toast.makeText(MainActivity.this, "Do Not Disturb access is already granted",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btnTestBlocking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testBlockingFunctionality();
             }
         });
     }
@@ -152,6 +192,22 @@ public class MainActivity extends AppCompatActivity {
             tvServiceStatus.setBackgroundColor(0xFFFFEBEE);
             tvServiceStatus.setTextColor(0xFFC62828);
         }
+
+        // Check Do Not Disturb access
+        boolean hasDndAccess = PermissionManager.hasNotificationPolicyAccess(this);
+        if (hasDndAccess) {
+            tvDndStatus.setText("Do Not Disturb: Access Granted");
+            tvDndStatus.setBackgroundColor(0xFFE8F5E9);
+            tvDndStatus.setTextColor(0xFF2E7D32);
+            btnDndAccess.setText("DND Access Granted ✓");
+            btnDndAccess.setEnabled(false);
+        } else {
+            tvDndStatus.setText("Do Not Disturb: Access Required");
+            tvDndStatus.setBackgroundColor(0xFFFFEBEE);
+            tvDndStatus.setTextColor(0xFFC62828);
+            btnDndAccess.setText("Grant DND Access");
+            btnDndAccess.setEnabled(true);
+        }
     }
 
     private boolean isAccessibilityServiceEnabled() {
@@ -177,5 +233,98 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.grant_permissions, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void addTestBlockedNumbers() {
+        BlockedNumbersManager blockedManager = new BlockedNumbersManager(this);
+
+        // Only add test data if no blocked numbers exist yet
+        if (blockedManager.getBlockedCount() == 0) {
+            // Add some test blocked numbers with different timestamps
+            long now = System.currentTimeMillis();
+
+            blockedManager.addBlockedNumber("+1234567890", "Keyword match: spam", "SPAM LIKELY");
+
+            // Add one from yesterday
+            long yesterday = now - (24 * 60 * 60 * 1000);
+            BlockedNumber yesterday_call = new BlockedNumber("+9876543210", yesterday, "Keyword match: telemarketer",
+                    "Unknown Caller - Telemarketer Service");
+
+            // Add one from last week
+            long lastWeek = now - (7 * 24 * 60 * 60 * 1000);
+            BlockedNumber old_call = new BlockedNumber("+5555555555", lastWeek, "Keyword match: promo",
+                    "Promotional Offer - Limited Time");
+
+            // Manually add these to storage (simulating older calls)
+            blockedManager.addBlockedNumber("+9876543210", "Keyword match: telemarketer",
+                    "Unknown Caller - Telemarketer Service");
+            blockedManager.addBlockedNumber("+5555555555", "Keyword match: promo", "Promotional Offer - Limited Time");
+        }
+    }
+
+    private void testBlockingFunctionality() {
+        StringBuilder result = new StringBuilder();
+        result.append("=== Spam Blocker Test Results ===\n\n");
+
+        // Check permissions
+        result.append("Permissions:\n");
+        result.append("- Accessibility Service: ").append(isAccessibilityServiceEnabled() ? "✓ Enabled" : "✗ Disabled")
+                .append("\n");
+        result.append("- Do Not Disturb Access: ")
+                .append(PermissionManager.hasNotificationPolicyAccess(this) ? "✓ Granted" : "✗ Missing").append("\n");
+        result.append("- Phone Permissions: ").append(checkBasicPermissions() ? "✓ Granted" : "✗ Missing")
+                .append("\n\n");
+
+        // Check keywords
+        KeywordManager keywordManager = new KeywordManager(this);
+        result.append("Keywords (").append(keywordManager.getKeywords().size()).append("):\n");
+        for (String keyword : keywordManager.getKeywords()) {
+            result.append("- ").append(keyword).append("\n");
+        }
+        result.append("\n");
+
+        // Check blocked numbers
+        BlockedNumbersManager blockedManager = new BlockedNumbersManager(this);
+        result.append("Blocked Numbers History (").append(blockedManager.getBlockedCount()).append("):\n");
+
+        // Test specific numbers
+        String[] testNumbers = { "+1234567890", "+9876543210", "+5555555555" };
+        for (String number : testNumbers) {
+            boolean isBlocked = blockedManager.isNumberBlocked(number);
+            result.append("- ").append(number).append(": ").append(isBlocked ? "✓ Blocked" : "○ Not blocked")
+                    .append("\n");
+        }
+
+        result.append("\n=== To test call blocking ===\n");
+        result.append("1. Ensure accessibility service is enabled\n");
+        result.append("2. Run simulate_call.ps1 from the project root\n");
+        result.append("3. Check if +1234567890 gets blocked\n");
+        result.append("4. View results in 'View Blocked Numbers'");
+
+        // Show result in a dialog or toast
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Test Results")
+                .setMessage(result.toString())
+                .setPositiveButton("OK", null)
+                .setNeutralButton("View Blocked Numbers", (dialog, which) -> {
+                    Intent intent = new Intent(MainActivity.this, BlockedNumbersActivity.class);
+                    startActivity(intent);
+                })
+                .show();
+    }
+
+    private boolean checkBasicPermissions() {
+        String[] permissions = {
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS
+        };
+
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
     }
 }
