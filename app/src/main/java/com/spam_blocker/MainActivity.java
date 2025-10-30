@@ -20,14 +20,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 1;
-    
+
     private EditText etKeyword;
     private Button btnAddKeyword;
     private Button btnEnableAccessibility;
     private RecyclerView rvKeywords;
     private TextView tvServiceStatus;
     private TextView tvEmptyKeywords;
-    
+
     private KeywordAdapter keywordAdapter;
     private KeywordManager keywordManager;
 
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         keywordManager = new KeywordManager(this);
-        
+
         initViews();
         setupRecyclerView();
         setupListeners();
@@ -88,16 +88,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                 startActivity(intent);
-                Toast.makeText(MainActivity.this, "Please enable Spam Blocker accessibility service", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Please enable Spam Blocker accessibility service", Toast.LENGTH_LONG)
+                        .show();
             }
         });
     }
 
     private void checkPermissions() {
         String[] permissions = {
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.READ_CALL_LOG,
-            Manifest.permission.MODIFY_AUDIO_SETTINGS
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS
         };
 
         boolean allGranted = true;
@@ -114,11 +115,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Request ANSWER_PHONE_CALLS permission separately for API 26+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ANSWER_PHONE_CALLS) 
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, 
-                    new String[]{Manifest.permission.ANSWER_PHONE_CALLS}, 
-                    PERMISSION_REQUEST_CODE);
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ANSWER_PHONE_CALLS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[] { Manifest.permission.ANSWER_PHONE_CALLS },
+                        PERMISSION_REQUEST_CODE);
             }
         }
     }
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUI() {
         keywordAdapter.notifyDataSetChanged();
-        
+
         if (keywordManager.getKeywords().isEmpty()) {
             tvEmptyKeywords.setVisibility(View.VISIBLE);
             rvKeywords.setVisibility(View.GONE);
@@ -154,11 +155,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean isAccessibilityServiceEnabled() {
-        String serviceName = getPackageName() + "/" + TruecallerAccessibilityService.class.getName();
+        String serviceName = getPackageName() + "/" + ScreenScanAccessibilityService.class.getName();
         String enabledServices = Settings.Secure.getString(
-            getContentResolver(),
-            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-        );
+                getContentResolver(),
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
         return enabledServices != null && enabledServices.contains(serviceName);
     }
 

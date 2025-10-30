@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Spam Blocker app uses a combination of Android system services and accessibility features to monitor incoming calls and block spam based on Truecaller's caller identification.
+The Spam Blocker app uses a combination of Android system services and accessibility features to monitor incoming calls and block spam by scanning the entire screen for caller identification information from any app or overlay.
 
 ## Component Architecture
 
@@ -28,7 +28,7 @@ The Spam Blocker app uses a combination of Android system services and accessibi
     ┌────────────────┴──────────────────────┐
     │                                       │
 ┌───┴──────────────────┐     ┌─────────────┴──────────────┐
-│   CallReceiver       │     │ TruecallerAccessibility   │
+│   CallReceiver       │     │ ScreenScanAccessibility   │
 │   - Phone state      │     │ Service                    │
 │   - Mute audio       │     │ - Read Truecaller UI       │
 │   - End calls        │     │ - Extract caller name      │
@@ -57,29 +57,32 @@ CallReceiver.onIncomingCall()
     - Notify CallStateManager: call incoming
 ```
 
-### 2. Truecaller Name Detection
+### 2. Screen Scanning for Caller Info
 ```
-Truecaller displays caller info
+Any caller ID app displays info (Truecaller, Google Phone, etc.)
     ↓
-TruecallerAccessibilityService.onAccessibilityEvent()
+ScreenScanAccessibilityService.onAccessibilityEvent()
     ↓
 Check: Is call incoming? YES
 Check: Already processed? NO
-Check: Within timeout (6s)? YES
+Check: Within timeout (10s)? YES
     ↓
-Extract caller name from Truecaller UI
+Wait 5 seconds for caller info to appear
     ↓
-Parse AccessibilityNodeInfo tree for text content
+Scan entire screen for all text content
     ↓
-Filter out UI elements (buttons, phone numbers)
+Parse AccessibilityWindowInfo and NodeInfo trees
     ↓
-Return potential caller name
+Collect all visible text from all windows/overlays
+    ↓
+Filter out common UI elements (buttons, phone numbers)
 ```
 
 ### 3. Spam Check
 ```
-Caller name extracted: "John Marketing"
+Screen text collected: {"John Marketing", "Incoming Call", "Answer", "Decline"}
     ↓
+For each text element:
 KeywordManager.containsKeyword("John Marketing")
     ↓
 Check each keyword in lowercase
@@ -97,14 +100,13 @@ CallReceiver.endCall()
 
 ### 4. Allow Call Path
 ```
-Caller name extracted: "John Doe"
+Screen text collected: {"John Doe", "Incoming Call", "Answer", "Decline"}
     ↓
-KeywordManager.containsKeyword("John Doe")
-    ↓
-Check each keyword in lowercase
-    - "spam" → NO
-    - "marketing" → NO
-    - (no matches)
+For each text element:
+KeywordManager.containsKeyword(text)
+    - "John Doe" → Check keywords: "spam" → NO, "marketing" → NO
+    - (Skip UI elements: "Incoming Call", "Answer", "Decline")
+    - (no matches found)
     ↓
 Decision: ALLOW CALL
     ↓
@@ -115,11 +117,11 @@ CallReceiver.unmuteRinger()
 
 ### 5. Timeout Scenario
 ```
-6 seconds elapsed
+10 seconds elapsed
     ↓
-TruecallerAccessibilityService timeout handler
+ScreenScanAccessibilityService timeout handler
     ↓
-Check: Caller name found? NO
+Check: Screen scanned? NO (or scan found no matches)
 Check: Already processed? NO
     ↓
 Decision: TIMEOUT - ALLOW BY DEFAULT
@@ -141,25 +143,27 @@ CallReceiver.unmuteRinger()
 **Alternative Considered**: Let ring normally, then mute if spam detected
 - Rejected: User would hear initial ring from spam calls
 
-### 2. 6-Second Timeout
-**Decision**: Allow calls after 6 seconds if no name detected.
+### 2. 5-Second Wait + 5-Second Buffer = 10-Second Timeout
+**Decision**: Wait 5 seconds, then scan screen. Allow calls after 10 seconds total if no keywords found.
 
 **Rationale**:
-- Truecaller typically displays names within 5 seconds
-- 1-second buffer for processing
+- Most caller ID apps display information within 5 seconds
+- 5-second wait ensures caller info has time to appear
+- Additional 5-second buffer for screen scanning and processing
 - Prevents legitimate calls from being permanently silent
 - Better to allow a spam call than block a legitimate one
 
-### 3. Accessibility Service for Truecaller
-**Decision**: Use AccessibilityService instead of direct API.
+### 3. Accessibility Service for Screen Scanning
+**Decision**: Use AccessibilityService to scan entire screen instead of targeting specific apps.
 
 **Rationale**:
-- Truecaller doesn't provide public API
-- Accessibility service can read on-screen content
-- Works with current Truecaller versions
+- Most caller ID apps don't provide public APIs
+- Accessibility service can read all on-screen content
+- Works with any caller ID app or overlay (Truecaller, Google Phone, etc.)
+- Universal approach - doesn't depend on specific app UI
 - No need for root access
 
-**Risk**: May break if Truecaller changes UI significantly
+**Risk**: May not work if accessibility permissions are revoked
 
 ### 4. Keyword-Based Matching
 **Decision**: Simple substring matching (case-insensitive).
