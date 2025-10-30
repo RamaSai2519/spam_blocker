@@ -61,6 +61,18 @@ public class CallReceiver extends BroadcastReceiver {
             }
         }
 
+        // Check if the number is already in the blocked list
+        if (currentPhoneNumber != null) {
+            BlockedNumbersManager blockedManager = new BlockedNumbersManager(context);
+            if (blockedManager.isNumberBlocked(currentPhoneNumber)) {
+                Log.d(TAG, "Number " + currentPhoneNumber + " is already blocked - ending call immediately");
+                endCall(context, "Previously blocked number", "Known spam number");
+                return; // Don't start accessibility service scan
+            } else {
+                Log.d(TAG, "Number " + currentPhoneNumber + " not in blocked list - starting scan");
+            }
+        }
+
         // Notify the accessibility service that a call is incoming
         CallStateManager.getInstance().setCallIncoming(true);
     }
@@ -76,21 +88,15 @@ public class CallReceiver extends BroadcastReceiver {
         // Restore previous ringer mode intelligently
         if (audioManager != null && PermissionManager.canChangeRingerMode(context)) {
             try {
-                // Only restore to silent if the user originally had silent mode
-                // Otherwise, keep normal/vibrate mode for future calls
-                int currentMode = audioManager.getRingerMode();
-                if (previousRingerMode == AudioManager.RINGER_MODE_SILENT) {
-                    audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-                    Log.d(TAG, "Ringer restored to silent mode (user's original preference)");
-                } else if (previousRingerMode == AudioManager.RINGER_MODE_VIBRATE) {
+                // Always restore to normal or vibrate mode after a call
+                // Never restore to silent mode to avoid enabling DND unintentionally
+                if (previousRingerMode == AudioManager.RINGER_MODE_VIBRATE) {
                     audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                     Log.d(TAG, "Ringer restored to vibrate mode");
                 } else {
-                    // Keep current mode if it's already normal, or set to normal
-                    if (currentMode != AudioManager.RINGER_MODE_NORMAL) {
-                        audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                    }
-                    Log.d(TAG, "Ringer restored to normal mode");
+                    // For any other previous mode (including silent), restore to normal
+                    audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                    Log.d(TAG, "Ringer restored to normal mode (was: " + previousRingerMode + ")");
                 }
             } catch (SecurityException se) {
                 Log.w(TAG, "Unexpected SecurityException during restore", se);
