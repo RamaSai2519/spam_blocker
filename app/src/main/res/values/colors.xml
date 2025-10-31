@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors -->
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorAccent">#FF4081</color>
+    
+    <!-- Status Colors -->
+    <color name="status_enabled">#4CAF50</color>
+    <color name="status_enabled_bg">#E8F5E9</color>
+    <color name="status_disabled">#F44336</color>
+    <color name="status_disabled_bg">#FFEBEE</color>
+    
+    <!-- Text Colors -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#9E9E9E</color>
+    
+    <!-- Background Colors -->
+    <color name="background_card">#FFFFFF</color>
+    <color name="background_app">#F5F5F5</color>
+    
+    <!-- Blocked Numbers Colors -->
+    <color name="blocked_total">#E53935</color>
+    <color name="blocked_today">#FF9800</color>
+    
+    <!-- Bottom Navigation -->
+    <color name="bottom_nav_selected">#2196F3</color>
+    <color name="bottom_nav_unselected">#757575</color>
+</resources>

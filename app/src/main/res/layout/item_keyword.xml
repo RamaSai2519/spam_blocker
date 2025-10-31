@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="16sp"
-        android:textColor="#212121" />
+        android:textColor="@android:color/white" />
 
     <ImageButton
         android:id="@+id/btn_delete"

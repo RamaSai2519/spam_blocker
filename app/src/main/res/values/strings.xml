@@ -4,11 +4,30 @@
     <string name="accessibility_service_description">Monitors entire screen for caller information to block spam calls based on keywords</string>
     <string name="title_blocked_keywords">Blocked Keywords</string>
     <string name="hint_add_keyword">Enter keyword to block</string>
-    <string name="btn_add_keyword">Add Keyword</string>
+    <string name="btn_add_keyword">Add</string>
     <string name="btn_enable_accessibility">Enable Accessibility Service</string>
-    <string name="status_service_enabled">Service: Enabled</string>
-    <string name="status_service_disabled">Service: Disabled</string>
-    <string name="empty_keywords">No keywords added yet</string>
+    <string name="status_service_enabled">✓ Accessibility Service: Enabled</string>
+    <string name="status_service_disabled">⚠ Accessibility Service: Disabled</string>
+    <string name="empty_keywords">No keywords added yet.\nTap the + button to add your first keyword.</string>
     <string name="permissions_required">Permissions Required</string>
     <string name="grant_permissions">Please grant all required permissions for the app to work</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_blocked_numbers">Blocked Numbers</string>
+    <string name="nav_settings">Settings</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="accessibility_title">Accessibility Service</string>
+    <string name="dnd_title">Do Not Disturb Access</string>
+    <string name="about_title">About</string>
+    
+    <!-- Messages -->
+    <string name="keyword_added">Keyword added successfully</string>
+    <string name="keyword_removed">Keyword removed</string>
+    <string name="keyword_empty_error">Please enter a keyword</string>
+    <string name="accessibility_help">Required for the app to detect and block spam calls based on caller information.</string>
+    <string name="dnd_help">Allows the app to silence blocked calls automatically.</string>
+    <string name="about_text">Spam Blocker automatically blocks incoming calls based on keywords that appear in the caller\'s name or number. Configure keywords in the Home tab and view blocked call history in the Blocked Numbers tab.</string>
 </resources>
