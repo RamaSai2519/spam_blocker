@@ -88,16 +88,8 @@ public class CallReceiver extends BroadcastReceiver {
         // Restore previous ringer mode intelligently
         if (audioManager != null && PermissionManager.canChangeRingerMode(context)) {
             try {
-                // Always restore to normal or vibrate mode after a call
-                // Never restore to silent mode to avoid enabling DND unintentionally
-                if (previousRingerMode == AudioManager.RINGER_MODE_VIBRATE) {
-                    audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-                    Log.d(TAG, "Ringer restored to vibrate mode");
-                } else {
-                    // For any other previous mode (including silent), restore to normal
-                    audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                    Log.d(TAG, "Ringer restored to normal mode (was: " + previousRingerMode + ")");
-                }
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                Log.d(TAG, "Ringer restored to vibrate mode");
             } catch (SecurityException se) {
                 Log.w(TAG, "Unexpected SecurityException during restore", se);
             }
@@ -113,14 +105,9 @@ public class CallReceiver extends BroadcastReceiver {
         Log.d(TAG, "Unmuting ringer - call allowed");
         if (audioManager != null && PermissionManager.canChangeRingerMode(context)) {
             try {
-                // For legitimate calls, always restore to normal ringing mode
-                // Don't use previousRingerMode as it might be silent (0)
-                int targetMode = (previousRingerMode == AudioManager.RINGER_MODE_VIBRATE)
-                        ? AudioManager.RINGER_MODE_VIBRATE
-                        : AudioManager.RINGER_MODE_NORMAL;
-
-                audioManager.setRingerMode(targetMode);
-                Log.d(TAG, "Ringer unmuted successfully to mode: " + targetMode + " (was: " + previousRingerMode + ")");
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                Log.d(TAG, "Ringer unmuted successfully to mode: " + AudioManager.RINGER_MODE_VIBRATE + " (was: "
+                        + previousRingerMode + ")");
             } catch (SecurityException se) {
                 Log.w(TAG, "Unexpected SecurityException in unmuteRinger", se);
             }

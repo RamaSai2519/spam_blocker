@@ -23,9 +23,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Add some test blocked numbers for demonstration (only add once)
-        addTestBlockedNumbers();
-
         initViews();
         setupBottomNavigation();
         checkPermissions();

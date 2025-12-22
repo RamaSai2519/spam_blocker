@@ -14,8 +14,8 @@ import java.util.Set;
 
 public class ScreenScanAccessibilityService extends AccessibilityService {
     private static final String TAG = "ScreenAccessibility";
-    private static final long SCREEN_SCAN_DELAY = 5000; // Wait 5 seconds before scanning
-    private static final long MAX_WAIT_TIME = 10000; // 10 seconds total (5 + 5 buffer)
+    private static final long SCREEN_SCAN_DELAY = 2000; // Wait 2 seconds before scanning
+    private static final long MAX_WAIT_TIME = 3000; // 5 seconds total (2 + 3 buffer)
 
     // Common call app packages to prioritize
     private static final String[] CALL_APP_PACKAGES = {
