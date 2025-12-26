@@ -4,7 +4,7 @@
 $emulatorHost = "localhost"
 $emulatorPort = 5554
 $authToken = "wMGSn8ZPS6YLDopp"
-$phoneNumber = "+919398036558"
+$phoneNumber = "+1234567890"
 
 try {
     # Connect to emulator console

@@ -14,7 +14,8 @@
     
     <!-- Navigation -->
     <string name="nav_home">Home</string>
-    <string name="nav_blocked_numbers">Blocked Numbers</string>
+    <string name="nav_blocked_numbers">Blocked</string>
+    <string name="nav_allow_list">Allowed</string>
     <string name="nav_settings">Settings</string>
     
     <!-- Settings -->

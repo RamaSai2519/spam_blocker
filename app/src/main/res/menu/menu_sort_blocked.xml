@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/sort_recent"
+            android:title="Sort by Recent"
+            android:checkable="true"
+            android:checked="true" />
+        <item
+            android:id="@+id/sort_contacts_first"
+            android:title="Contacts First"
+            android:checkable="true" />
+    </group>
+</menu>

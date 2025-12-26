@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="?attr/selectableItemBackground">
+
+    <!-- Timestamp -->
+    <TextView
+        android:id="@+id/tv_entry_timestamp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dec 22, 2023 20:15"
+        android:textSize="14sp"
+        android:textColor="@color/text_primary"
+        android:textStyle="normal" />
+
+    <!-- Reason -->
+    <TextView
+        android:id="@+id/tv_entry_reason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Keyword match: spam"
+        android:textSize="13sp"
+        android:textColor="@color/reason_red"
+        android:layout_marginTop="4dp" />
+
+    <!-- Caller Info (optional) -->
+    <TextView
+        android:id="@+id/tv_entry_caller_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Caller Info"
+        android:textSize="12sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginTop="2dp"
+        android:visibility="gone" />
+
+    <!-- Divider (bottom) -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/text_hint"
+        android:alpha="0.2" />
+
+</LinearLayout>

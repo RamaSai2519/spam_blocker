@@ -61,6 +61,17 @@ public class CallReceiver extends BroadcastReceiver {
             }
         }
 
+        // Check if the number is in the allow list first
+        if (currentPhoneNumber != null) {
+            AllowListManager allowListManager = new AllowListManager(context);
+            if (allowListManager.isInAllowList(currentPhoneNumber)) {
+                Log.d(TAG, "Number " + currentPhoneNumber + " is in allow list - allowing call");
+                unmuteRinger(context);
+                CallStateManager.getInstance().setCallIncoming(false);
+                return; // Allow the call through
+            }
+        }
+
         // Check if the number is already in the blocked list
         if (currentPhoneNumber != null) {
             BlockedNumbersManager blockedManager = new BlockedNumbersManager(context);

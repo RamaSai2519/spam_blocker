@@ -1,9 +1,11 @@
 package com.spam_blocker;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     private static final int PERMISSION_REQUEST_CODE = 1;
 
     private BottomNavigationView bottomNavigation;
@@ -26,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         setupBottomNavigation();
         checkPermissions();
+
+        // Start the CallMonitorService to register CallReceiver
+        startCallMonitorService();
 
         // Load default fragment
         if (savedInstanceState == null) {
@@ -45,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new HomeFragment();
             } else if (item.getItemId() == R.id.nav_blocked_numbers) {
                 selectedFragment = new BlockedNumbersFragment();
+            } else if (item.getItemId() == R.id.nav_allow_list) {
+                selectedFragment = new AllowListFragment();
             } else if (item.getItemId() == R.id.nav_settings) {
                 selectedFragment = new SettingsFragment();
             }
@@ -68,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         String[] permissions = {
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.READ_CONTACTS,
                 Manifest.permission.MODIFY_AUDIO_SETTINGS
         };
 
@@ -151,5 +160,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    private void startCallMonitorService() {
+        Log.d(TAG, "Starting CallMonitorService");
+        Intent serviceIntent = new Intent(this, CallMonitorService.class);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
+
+        Log.d(TAG, "CallMonitorService start requested");
     }
 }

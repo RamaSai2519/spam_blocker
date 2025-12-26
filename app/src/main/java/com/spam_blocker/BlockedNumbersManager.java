@@ -120,13 +120,29 @@ public class BlockedNumbersManager {
             return false;
         }
 
+        // Normalize the input phone number
+        String normalizedInput = normalizePhoneNumber(phoneNumber);
+
         List<BlockedNumber> blockedNumbers = getBlockedNumbers();
         for (BlockedNumber blockedNumber : blockedNumbers) {
-            if (phoneNumber.equals(blockedNumber.getPhoneNumber())) {
+            String normalizedBlocked = normalizePhoneNumber(blockedNumber.getPhoneNumber());
+            if (normalizedInput.equals(normalizedBlocked)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Normalize phone number by removing all non-digit characters except leading +
+     */
+    private String normalizePhoneNumber(String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.isEmpty()) {
+            return "";
+        }
+        // Keep only digits, removing + and other characters
+        String digitsOnly = phoneNumber.replaceAll("[^0-9]", "");
+        return digitsOnly;
     }
 
     /**
